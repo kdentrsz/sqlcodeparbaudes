@@ -4,13 +4,13 @@ from datetime import datetime
 import sqlite3
 
 class DatabaseManager:
-    def __init__(self, db_name='nomanomatomatoma.db'):
+    def __init__(self, db_name='nomafinalfinalfinal.db'):
         self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
         self.create_tables()
 
     def create_tables(self):
-        # Создание таблиц
+        
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS Klienti (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,7 +37,7 @@ class DatabaseManager:
                 KlientaID INTEGER,
                 NomaIlgums INTEGER,
                 KopejaCena REAL,
-                Statuss TEXT,
+                ProduktsPieejams TEXT,
                 NomaCenaDiena REAL,
                 FOREIGN KEY (NominacijaID) REFERENCES Nominacijas (ID),
                 FOREIGN KEY (KlientaID) REFERENCES Klienti (ID)
@@ -62,11 +62,11 @@ class DatabaseManager:
 
         self.conn.commit()
 
-    def insert_noma(self, nominacija_id, klienta_id, noma_ilgums, kopeja_cena, statuss, noma_cena_diena):
+    def insert_noma(self, nominacija_id, klienta_id, noma_ilgums, kopeja_cena, produkts_pieejams, noma_cena_diena):
         self.cursor.execute('''
-            INSERT INTO Noma (NominacijaID, KlientaID, NomaIlgums, KopejaCena, Statuss, NomaCenaDiena)
+            INSERT INTO Noma (NominacijaID, KlientaID, NomaIlgums, KopejaCena, ProduktsPieejams, NomaCenaDiena)
             VALUES (?, ?, ?, ?, ?, ?)
-        ''', (nominacija_id, klienta_id, noma_ilgums, kopeja_cena, statuss, noma_cena_diena))
+        ''', (nominacija_id, klienta_id, noma_ilgums, kopeja_cena, produkts_pieejams, noma_cena_diena))
 
         self.conn.commit()
 
@@ -162,12 +162,12 @@ class NomaTab:
         self.entry_beigu_datums = ttk.Entry(frame_noma)
         self.entry_beigu_datums.grid(row=1, column=1, padx=5, pady=5)
 
-        label_statuss = ttk.Label(frame_noma, text="Statuss:")
-        label_statuss.grid(row=2, column=0, padx=5, pady=5)
-        self.entry_statuss = ttk.Entry(frame_noma)
-        self.entry_statuss.grid(row=2, column=1, padx=5, pady=5)
+        label_produkts_pieejams = ttk.Label(frame_noma, text="Produkts pieejams:")
+        label_produkts_pieejams.grid(row=2, column=0, padx=5, pady=5)
+        self.produkts_pieejams = ttk.Entry(frame_noma)
+        self.produkts_pieejams.grid(row=2, column=1, padx=5, pady=5)
 
-        # Add the missing entry for noma_cena_diena
+        
         label_noma_cena_diena = ttk.Label(frame_noma, text="Noma Cena Dienā:")
         label_noma_cena_diena.grid(row=3, column=0, padx=5, pady=5)
         self.entry_noma_cena_diena = ttk.Entry(frame_noma)
@@ -187,12 +187,12 @@ class NomaTab:
         beigu_datums = datetime.strptime(beigu_datums_str, "%d.%m.%Y")
 
         noma_ilgums = (beigu_datums - sakuma_datums).days
-        noma_cena_diena = float(self.entry_noma_cena_diena.get())  # Corrected line
+        noma_cena_diena = float(self.entry_noma_cena_diena.get())  
 
         kopeja_cena = noma_ilgums * noma_cena_diena
-        statuss = self.entry_statuss.get()
+        produkts_pieejams = self.produkts_pieejams.get()
 
-        self.db_manager.insert_noma(nominacija_id, klienta_id, noma_ilgums, kopeja_cena, statuss, noma_cena_diena)
+        self.db_manager.insert_noma(nominacija_id, klienta_id, noma_ilgums, kopeja_cena, produkts_pieejams, noma_cena_diena)
 
 if __name__ == "__main__":
     root = tk.Tk()
